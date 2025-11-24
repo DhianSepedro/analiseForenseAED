@@ -26,11 +26,14 @@ public class theMentalist implements AnaliseForenseAvancada {
         Map<String, Stack<String>> pilhasDosUsuarios = new HashMap<>();
         
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            String linha = br.readLine(); 
+            br.readLine(); 
+            String linha;
             
             while ((linha = br.readLine()) != null) {
                 String[] campos = linha.split(",");
-                
+                 if (campos.length < 4) { 
+                    continue;
+                }
                 String userId = campos[1];
                 String sessionId = campos[2];
                 String actionType = campos[3];
@@ -70,10 +73,11 @@ public class theMentalist implements AnaliseForenseAvancada {
             
             while ((linha = br.readLine()) != null) {
                 String[] campos = linha.split(",");
-                
+                 if (campos.length < 4) { 
+                    continue;
+                }
                 if (sessionId.equals(campos[2].trim())) {
                     fila.add(campos[3]);
-                    //linhaDoTempo.add(fila.poll()); perguntar sobre isso
                 }
                      
                
@@ -133,9 +137,8 @@ public class theMentalist implements AnaliseForenseAvancada {
         List<long[]> eventos = new ArrayList<>();
     
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine(); //pula o cabeçalho
-
-            String linha;
+            String linha = br.readLine(); 
+            
             while ((linha = br.readLine()) != null) {
             if (linha.isEmpty()) {
                 continue;
@@ -178,7 +181,7 @@ public class theMentalist implements AnaliseForenseAvancada {
             pilha.pop();
         }
         
-        //topo é o proximo maior
+        //topo e o proximo maior
         if (!pilha.isEmpty()) {
             resultado.put(timestampAtual, pilha.peek()[0]);
         }
@@ -195,9 +198,7 @@ public class theMentalist implements AnaliseForenseAvancada {
          Map<String, List<String>> sessoes = new HashMap<>(); //grafo
     
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-             br.readLine();
-        
-             String linha;
+             String linha = br.readLine(); 
              while ((linha = br.readLine()) != null) {
                   if (linha.isEmpty()) {
                     continue;
