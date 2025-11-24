@@ -19,18 +19,20 @@ import java.io.IOException;
 public class theMentalist implements AnaliseForenseAvancada {  
     public theMentalist() {  
  }
+    private static final int BUFFER_SIZE = 65536; //64kb de buffer para otimizar a leitura de arquivos grandes
     @Override
     public Set<String> encontrarSessoesInvalidas(String caminhoArquivo) throws IOException {
         Set<String> sessoesInvalidas = new HashSet<>();
         
         Map<String, Stack<String>> pilhasDosUsuarios = new HashMap<>();
         
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo), BUFFER_SIZE)) {
             br.readLine(); 
             String linha;
             
             while ((linha = br.readLine()) != null) {
-                String[] campos = linha.split(",");
+                if (linha.isEmpty()) continue;
+                String[] campos = linha.split(",",5);
                  if (campos.length < 4) { 
                     continue;
                 }
@@ -66,13 +68,14 @@ public class theMentalist implements AnaliseForenseAvancada {
     @Override
     public List<String> reconstruirLinhaTempo (String caminhoArquivo, String sessionId) throws IOException {
         List<String> linhaDoTempo = new ArrayList<>();
-        Queue<String> fila = new LinkedList<>();
+        Queue<String> fila = new LinkedList<>(); 
         
-         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo), BUFFER_SIZE)) {
             String linha = br.readLine(); 
             
             while ((linha = br.readLine()) != null) {
-                String[] campos = linha.split(",");
+                if (linha.isEmpty()) continue;
+                String[] campos = linha.split(",",5);
                  if (campos.length < 4) { 
                     continue;
                 }
@@ -93,10 +96,11 @@ public class theMentalist implements AnaliseForenseAvancada {
         PriorityQueue<Alerta> filaPrioridade = new PriorityQueue<>(
         (a1, a2) -> Integer.compare(a2.getSeverityLevel(), a1.getSeverityLevel()));
 
-         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo), BUFFER_SIZE)) {
             String linha = br.readLine(); 
             
             while ((linha = br.readLine()) != null) {
+                if (linha.isEmpty()) continue;
                 String[] campos = linha.split(",", -1);
                 
                 if (campos.length < 7) {
@@ -136,7 +140,7 @@ public class theMentalist implements AnaliseForenseAvancada {
         Map<Long, Long> resultado = new HashMap<>();
         List<long[]> eventos = new ArrayList<>();
     
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo), BUFFER_SIZE)) {
             String linha = br.readLine(); 
             
             while ((linha = br.readLine()) != null) {
@@ -144,7 +148,7 @@ public class theMentalist implements AnaliseForenseAvancada {
                 continue;
             }
         
-            String[] campos = linha.split(",");
+            String[] campos = linha.split(",",8);
             
             if (campos.length < 7) {
                 continue;
@@ -197,14 +201,14 @@ public class theMentalist implements AnaliseForenseAvancada {
     public Optional<List<String>> rastrearContaminacao(String caminhoArquivo, String recursoInicial, String recursoAlvo) throws IOException {
          Map<String, List<String>> sessoes = new HashMap<>(); //grafo
     
-        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo), BUFFER_SIZE)) {
              String linha = br.readLine(); 
              while ((linha = br.readLine()) != null) {
                   if (linha.isEmpty()) {
                     continue;
                  }
             
-                String[] campos = linha.split(",");
+                String[] campos = linha.split(",",6);
             
                 if (campos.length < 5) {
                   continue;
